@@ -1,5 +1,5 @@
 /***************|
-|* DEPENDECIES *| 
+|* DEPENDECIES *|
 |***************/
 /* GENERAL */
 // Utilities for working with file and directory paths
@@ -18,7 +18,7 @@ const request = require('request');
 const cheerio = require('cheerio');
 
 /******************|
-|* INITIALIZATION *| 
+|* INITIALIZATION *|
 |******************/
 /* SET UP FOLDER PATHS */
 const mongoModelDir = path.join(__dirname, '..', 'db', 'models', 'mongoose-models');
@@ -47,6 +47,7 @@ router.get('/scrap', (req, res) => {
                 article.key = $(ele).attr('id');
                 article.title = $(ele).find('span[class="story-title"] > a').text();
                 article.innerHTML = $(ele).find('div[class="body"] > div').html().replace(/((\n|\t))+( )?((\n|\t))+/gm, '');
+				
                 Articles.create(article, (error, data) => {
                     if (error) {
                         if (error.code == 11000) console.log(`Article ID:${article.key} already in database.`);
@@ -56,7 +57,10 @@ router.get('/scrap', (req, res) => {
                         articlesArr.push(data);
                     }
                 });
-            });
+            })
+			.then(() => {
+				console.log('finish');
+			})
             res.json(articlesArr);
         }
 
@@ -72,8 +76,12 @@ router.delete('/article/:id', (req, res) => {
 router.put('/notes/:id', (req, res) => {
 });
 
+/********************|
+|* HELPER FUNCTIONS *|
+|********************/
+
 /***********|
-|* EXPORTS *| 
+|* EXPORTS *|
 |***********/
 // Export instance of express router
 module.exports = router;
