@@ -16,6 +16,12 @@ const PORT = process.env.PORT || 3000;
 //  MongoDB object modeling tool
 const mongoose = require('mongoose');
 
+/* PROMISE LIBRARY */
+// Bluebird is a fully featured promise library with focus on features and performance
+const Promise = require('bluebird');
+// Replace mongoose's promise library 
+mongoose.Promise = Promise;
+
 /* BODY PARSERS */
 // node.js body parsing middleware avaiable under req.body
 const bodyParser = require('body-parser');
