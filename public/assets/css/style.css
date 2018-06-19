@@ -24,5 +24,9 @@ i {
 }
 
 #loader[class*="off"] {
-    display:none;
+    display: none;
+}
+
+#no-data {
+    display: none;
 }

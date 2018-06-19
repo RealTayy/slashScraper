@@ -15,15 +15,14 @@ const Schema = mongoose.Schema;
 |**********/
 // Create Schema for Note
 const Note = new Schema({
-	title: {
-		type: String,
-		trim: true,
-		require: 'Note collectionrequires a title field'
-	},
 	text: {
 		type: String,
 		trim: true,
-		require: 'Note collectionrequires a title field'
+		require: 'Note collection requires a title field'
+	},
+	article_id: {
+		type: Schema.Types.ObjectId,
+		ref: 'Articles'
 	}
 });
 

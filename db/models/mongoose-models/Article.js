@@ -30,10 +30,12 @@ const Article = new Schema({
 		trim: true,
 		require: 'Article collection requires an innerHTML field'
 	},
-	notes: {
-		type: Schema.Types.ObjectId,
-		ref: 'Note'
-	}
+	notes: [
+		{
+			type: Schema.Types.ObjectId,
+			ref: 'Notes'
+		}
+	]
 });
 
 /***********|

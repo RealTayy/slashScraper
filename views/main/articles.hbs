@@ -1,10 +1,15 @@
  {{>main/_title-header}} {{>main/_nav-bar}}
 <section id="content">
-    <div class="container">
-        <div id="loader" class="text-center">
-            <h3>Loading saved articles...</h3>
-            <img src="../../assets/images/loader.gif" />
-        </div>
-        <div id="articles" class="row">
-        </div>
+	<div class="container">
+		<div id="loader" class="text-center">
+			<h3>Loading saved articles...</h3>
+			<img src="../../assets/images/loader.gif" />
+		</div>
+		<div id="no-data" class="text-center">
+			<h2>Uh oh! You haven't saved any articles yet... Go back to the scraper and save some articles!</h2>
+		</div>
+		<div id="articles" class="row">
+		</div>
+		{{>main/_notes-modal}}
+	</div>
 </section>

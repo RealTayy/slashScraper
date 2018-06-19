@@ -72,7 +72,7 @@ router.get('/scrap', (req, res) => {
             res.json(articlesArr);;
         })
         .catch((error) => {
-            throw new Error(error);
+            res.json(error);
         });
 });
 
@@ -83,7 +83,7 @@ router.get('/articles', (req, res) => {
         });
 });
 
-router.post('/articles', (req, res) => {    
+router.post('/articles', (req, res) => {
     const article = req.body;
     Articles
         .create(article, (error, data) => {
@@ -95,6 +95,18 @@ router.post('/articles', (req, res) => {
         });
 });
 
+router.get('/articles/:id', (req, res) => {
+    const id = req.params.id;
+    Articles
+        .find({ _id: new ObjectId(id) })
+        .populate("notes")
+        .then((article) => {
+            res.json(article);
+        })
+        .catch((error) => {
+            res.json(error);
+        })
+});
 
 router.delete('/articles/:id', (req, res) => {
     const id = req.params.id;
@@ -103,20 +115,38 @@ router.delete('/articles/:id', (req, res) => {
             if (error) console.log(error);
             res.json(data);
         });
-
 });
 
 router.post('/notes', (req, res) => {
-    const note = req.body.note;
+    const text = req.body.text;
+    const id = req.body.id;
     Notes
-        .create(note, (error, data) => {
+        .create({ text: text, article_id: new ObjectId(id) })
+        .then((note) => {
+            Articles.findOneAndUpdate(
+                { _id: new ObjectId(id) },
+                { $push: { notes: note._id } },
+                { new: true })
+                .then(() => {
+                    res.json(note)
+                })
+                .catch((error) => {
+                    res.json(error)
+                });
+        }).catch((error) => {
+            res.json(error);
+        })
+});
+
+router.get('/notes', (req, res) => {
+    Notes
+        .find({}, (error, data) => {
             if (error) console.log(error);
             res.json(data);
         });
+})
 
-});
-
-router.get('/notes/:id', (req, res) => {    
+router.get('/notes/:id', (req, res) => {
     const id = req.params.id;
     Notes
         .find({ _id: new ObjectId(id) }, (error, data) => {
@@ -128,7 +158,7 @@ router.get('/notes/:id', (req, res) => {
 router.delete('/notes/:id', (req, res) => {
     const id = req.params.id;
     Notes
-        .deleteOne({ _id: new ObjectId(id) }, (error, data) => {
+        .remove({ _id: new ObjectId(id) }, (error, data) => {
             if (error) console.log(error);
             res.json(data);
         });
