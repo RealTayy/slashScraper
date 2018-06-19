@@ -20,7 +20,7 @@ const mongoose = require('mongoose');
 // Bluebird is a fully featured promise library with focus on features and performance
 // const Promise = require('bluebird');
 // Replace mongoose's promise library 
-mongoose.Promise = Promise;
+// mongoose.Promise = Promise;
 
 /* BODY PARSERS */
 // node.js body parsing middleware avaiable under req.body
@@ -52,6 +52,7 @@ const exphbs = require('express-handlebars');
 // Connect to db
 // If deployed. use deployed DT. Otherwise use local DB
 var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/slashdotScraperDB";
+mongoose.Promise = Promise;
 mongoose.connect(MONGODB_URI);
 const db = mongoose.connection;
 
