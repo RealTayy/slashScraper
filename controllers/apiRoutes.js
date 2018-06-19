@@ -11,11 +11,18 @@ const express = require('express');
 // create instance of express router
 const router = express.Router();
 
+/* PROMISE LIBRARY */
+// Bluebird is a fully featured promise library with focus on features and performance
+const Promise = require('bluebird');
+
 /* WEB SCRAPERS */
 // tool for making HTTP calls
-const request = require('request');
+let request = require('request');
 // scraper that implements jQuery
-const cheerio = require('cheerio');
+let cheerio = require('cheerio');
+// Integrates Bluebird' promise library with request and cheerio
+request = Promise.promisifyAll(request);
+// cheerio = Promise.promisifyAll(cheerio);
 
 /******************|
 |* INITIALIZATION *|
@@ -32,39 +39,51 @@ const Notes = require(path.join(mongoModelDir, 'Note.js'));
 |*****************/
 /* SET ROUTES */
 router.get('/scrap', (req, res) => {
-    request(
-        'https://slashdot.org/',
-        function (error, response, html) {
-            if (error) throw new Error(error);
-            if (response.statusCode != 200) console.log(`Exiting request: Page returned status code: ' ${response.statusCode}`);
-
-            var $ = cheerio.load(html);
-
+    console.log(`Starting Scraping...`)
+    console.log(`Requesting "https://slashdot.org"...`)
+    request.getAsync('https://slashdot.org/')
+        .then((response) => {
+            console.log(`Response code: ${response.statusCode}`)
+            if (response.statusCode != 200) {
+                console.log(`Exiting request: Page returned status code: ' ${response.statusCode}`);
+            }
+            return response.body;
+        })
+        .then((body) => {
+            console.log(`Loading body into cheerio...`);
+            var $ = cheerio.load(body);
+            console.log(`Grabbing html elements with <articles class="articles">`);
             let articlesArr = [];
-
+            console.log(`Creating articles array from html elements found`);
             $('article.article').each((i, ele) => {
                 let article = {};
                 article.key = $(ele).attr('id');
                 article.title = $(ele).find('span[class="story-title"] > a').text();
                 article.innerHTML = $(ele).find('div[class="body"] > div').html().replace(/((\n|\t))+( )?((\n|\t))+/gm, '');
-				
-                Articles.create(article, (error, data) => {
-                    if (error) {
-                        if (error.code == 11000) console.log(`Article ID:${article.key} already in database.`);
-                        else console.log(error);
-                    }
-                    else {
-                        articlesArr.push(data);
-                    }
-                });
+                articlesArr.push(article);
             })
-			.then(() => {
-				console.log('finish');
-			})
-            res.json(articlesArr);
-        }
-
-    )
+            return articlesArr
+        })
+        .each((article) => {
+            console.log(`Pushing ${article.key} into DB`);
+            Articles.create(article, (error, data) => {
+                if (error) {
+                    if (error.code == 11000) console.log(`Article ID:${data.key} already in database.`);
+                    else console.log(error);
+                }
+                else {
+                    console.log(`Article ID:${data.key} pushed in successfully!`);
+                }
+            });
+            return;
+        })
+        .then((blah) => {
+            console.log(`Scraping complete!`);
+            res.json(blah);;            
+        })
+        .catch((error) => {
+            throw new Error(error);
+        })
 });
 
 router.post('/articles', (req, res) => {
