@@ -18,7 +18,7 @@ const mongoose = require('mongoose');
 
 /* PROMISE LIBRARY */
 // Bluebird is a fully featured promise library with focus on features and performance
-const Promise = require('bluebird');
+// const Promise = require('bluebird');
 // Replace mongoose's promise library 
 mongoose.Promise = Promise;
 
