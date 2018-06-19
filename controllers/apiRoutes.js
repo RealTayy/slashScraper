@@ -17,12 +17,10 @@ const Promise = require('bluebird');
 
 /* WEB SCRAPERS */
 // tool for making HTTP calls
-let request = require('request');
+// Integrates Bluebird' promise library with request
+const request = Promise.promisifyAll(require('request'));
 // scraper that implements jQuery
-let cheerio = require('cheerio');
-// Integrates Bluebird' promise library with request and cheerio
-request = Promise.promisifyAll(request);
-// cheerio = Promise.promisifyAll(cheerio);
+const cheerio = require('cheerio');
 
 /******************|
 |* INITIALIZATION *|
@@ -64,29 +62,31 @@ router.get('/scrap', (req, res) => {
             })
             return articlesArr
         })
-        .each((article) => {
-            console.log(`Pushing ${article.key} into DB`);
-            Articles.create(article, (error, data) => {
-                if (error) {
-                    if (error.code == 11000) console.log(`Article ID:${data.key} already in database.`);
-                    else console.log(error);
-                }
-                else {
-                    console.log(`Article ID:${data.key} pushed in successfully!`);
-                }
-            });
-            return;
-        })
-        .then((blah) => {
+        .then((articlesArr) => {
             console.log(`Scraping complete!`);
-            res.json(blah);;            
+            res.json(articlesArr);;
         })
         .catch((error) => {
             throw new Error(error);
         })
 });
 
+router.get('/articles', (req, res) => {
+    Articles.find({}, (error, data) => {
+        res.json(data);
+    })
+});
+
 router.post('/articles', (req, res) => {
+    article = req.body.article;
+    Articles
+        .create(article, (error, data) => {
+            if (error) {
+                if (error.code == 11000) console.log(`ARTICLES_CREATE_ERROR: Article already exist. Not adding to DB again.`);
+                else console.log(error)
+            }
+            res.json(data);
+        })
 });
 
 router.delete('/article/:id', (req, res) => {
