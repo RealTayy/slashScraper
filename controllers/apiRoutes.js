@@ -83,8 +83,8 @@ router.get('/articles', (req, res) => {
         });
 });
 
-router.post('/articles', (req, res) => {
-    const article = req.body.article;
+router.post('/articles', (req, res) => {    
+    const article = req.body;
     Articles
         .create(article, (error, data) => {
             if (error) {

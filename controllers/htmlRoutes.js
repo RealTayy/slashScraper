@@ -22,15 +22,20 @@ var exphbs = require('express-handlebars');
 const mongoModelDir = path.join(__dirname, '..', 'db', 'models', 'mongoose-models');
 
 /* TALK TO MODELS */
-const articles = require(path.join(mongoModelDir, 'Article.js'));
-const notes = require(path.join(mongoModelDir, 'Note.js'));
+const Articles = require(path.join(mongoModelDir, 'Article.js'));
+const Notes = require(path.join(mongoModelDir, 'Note.js'));
 
 /*****************|
 |* SET UP ROUTER *| 
 |*****************/
 /* SET ROUTES */
 router.get('/', (req, res) => {
-    res.render('./main/index.hbs', { text: 'Hello Tay!' });
+    res.render('./main/index.hbs', { route: 'index' });
+});
+
+router.get('/articles', (req, res) => {
+    res.render('./main/articles.hbs', { route: 'articles' });
+
 });
 
 /***********|

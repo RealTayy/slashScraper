@@ -1,3 +1,28 @@
-html {
-    color:red
+.jumbotron {
+    margin-bottom: 0;
+}
+
+.btn {
+    border: none;
+    border-radius: 0;
+}
+
+#nav {
+    margin-bottom: 2rem;
+}
+
+.card {
+    border-radius: 0;
+    margin-bottom: 1rem;
+}
+
+i {    
+    display: block;
+    margin: .618rem;
+    padding-left: .618rem;
+    border-left: 3px #343A40 solid
+}
+
+#loader[class*="off"] {
+    display:none;
 }

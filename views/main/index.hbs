@@ -1,1 +1,20 @@
-<div>{{text}}</div>
+ {{>main/_title-header}} {{>main/_nav-bar}}
+<section id="content">
+	<div class="container">
+		<div class="row">
+			<div id="intro">
+				<h2 class="text-center">Hi this is a simple Web Scraper that utilizes Cheerio to scrap data and Mongoose to store the data in MongoDB</h2>
+				<p class="text-center">Click below to scrap</p>
+				<div class="text-center">
+					<button id="scrape" type="button" class="btn btn-dark">Start Scraping</button>
+				</div>
+			</div>
+		</div>
+		<div id="loader" class="text-center off">
+			<h3>Scraping in progress...</h3>
+			<img src="../../assets/images/loader.gif" />
+		</div>
+		<div id="articles" class="row">
+		</div>
+	</div>
+</section>
