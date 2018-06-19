@@ -22,6 +22,10 @@ const request = Promise.promisifyAll(require('request'));
 // scraper that implements jQuery
 const cheerio = require('cheerio');
 
+/* DATABASE TOOLS*/
+// Loads ObjectId class to search by ObjectId
+const ObjectId = require('mongoose').Types.ObjectId;
+
 /******************|
 |* INITIALIZATION *|
 |******************/
@@ -39,7 +43,8 @@ const Notes = require(path.join(mongoModelDir, 'Note.js'));
 router.get('/scrap', (req, res) => {
     console.log(`Starting Scraping...`)
     console.log(`Requesting "https://slashdot.org"...`)
-    request.getAsync('https://slashdot.org/')
+    request
+        .getAsync('https://slashdot.org/')
         .then((response) => {
             console.log(`Response code: ${response.statusCode}`)
             if (response.statusCode != 200) {
@@ -68,17 +73,18 @@ router.get('/scrap', (req, res) => {
         })
         .catch((error) => {
             throw new Error(error);
-        })
+        });
 });
 
 router.get('/articles', (req, res) => {
-    Articles.find({}, (error, data) => {
-        res.json(data);
-    })
+    Articles
+        .find({}, (error, data) => {
+            res.json(data);
+        });
 });
 
 router.post('/articles', (req, res) => {
-    article = req.body.article;
+    const article = req.body.article;
     Articles
         .create(article, (error, data) => {
             if (error) {
@@ -86,18 +92,47 @@ router.post('/articles', (req, res) => {
                 else console.log(error)
             }
             res.json(data);
-        })
+        });
 });
 
-router.delete('/article/:id', (req, res) => {
+
+router.delete('/articles/:id', (req, res) => {
+    const id = req.params.id;
+    Articles
+        .deleteOne({ _id: new ObjectId(id) }, (error, data) => {
+            if (error) console.log(error);
+            res.json(data);
+        });
+
 });
 
-router.put('/notes/:id', (req, res) => {
+router.post('/notes', (req, res) => {
+    const note = req.body.note;
+    Notes
+        .create(note, (error, data) => {
+            if (error) console.log(error);
+            res.json(data);
+        });
+
 });
 
-/********************|
-|* HELPER FUNCTIONS *|
-|********************/
+router.get('/notes/:id', (req, res) => {    
+    const id = req.params.id;
+    Notes
+        .find({ _id: new ObjectId(id) }, (error, data) => {
+            if (error) console.log(error);
+            res.json(data);
+        });
+})
+
+router.delete('/notes/:id', (req, res) => {
+    const id = req.params.id;
+    Notes
+        .deleteOne({ _id: new ObjectId(id) }, (error, data) => {
+            if (error) console.log(error);
+            res.json(data);
+        });
+})
 
 /***********|
 |* EXPORTS *|
