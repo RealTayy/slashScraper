@@ -50,6 +50,8 @@ const exphbs = require('express-handlebars');
 |* SET UP MODELS *| 
 |*****************/
 // Connect to db
+// If deployed. use deployed DT. Otherwise use local DB
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/slashdotScraperDB";
 mongoose.connect('mongodb://localhost/slashdotScraperDB');
 const db = mongoose.connection;
 
